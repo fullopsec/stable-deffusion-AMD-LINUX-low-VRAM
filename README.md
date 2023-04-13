@@ -9,7 +9,9 @@ This video show how to install stable diffusion and make it work with only an 8G
 Lower VRAM GPU might work but you have to try  your own combination of launch parameters 
 
 Must have: 
+
 Linux OS (I use a debian based distro)
+
 AMD GPU (8GB works)
 
 Each GPU can be different. The parameters I needed might be different from yours, try them. It took me 3 hours to find which worked for my GPU.
@@ -33,8 +35,8 @@ https://www.amd.com/en/support
 
 Add yourself to the render and video groups using
 ```
-sudo usermod -a -G render daniel      
-sudo usermod -a -G video daniel
+sudo usermod -a -G render yourusername      
+sudo usermod -a -G video yourusername
 ```
 
 Confirm you have python 3 installed by typing into terminal:
@@ -55,7 +57,7 @@ After rebooting, this command should show your gpu:
 
 `rocminfo`
 
-Clone the stable deffusion GUI repo:
+Clone the stable diffusion GUI repo:
 
 ```
 sudo apt-get install git
@@ -68,13 +70,15 @@ If you have python 3.8 enter this to make sure you have VENV capabilities (repla
 
   `apt install python3.8-venv`    
   
+  
    Install pip3 and wheel and update them
+   
 ```
 sudo apt install python3-pip           
 python -m pip install --upgrade pip wheel
 ```      
 
-Download any stable deffusion model you like and put it in models/Stable-diffusion folder
+Download any stable diffusion model you like and put it in models/Stable-diffusion folder
 
 You can go to https://civitai.com/ to find models (also a good source for prompts)
 
@@ -83,6 +87,7 @@ Upgrade to latest stable kernel(for better performances):
 sudo apt-get update
 sudo apt-get dist-upgrade
 ```
+
 reboot again
 
 `sudo reboot`
@@ -104,7 +109,7 @@ This is to be installed in the VENV, not on the OS!
 `pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/rocm5.4.2` 
 
 
-after that’s installed, check your version numbers with the command
+After that’s installed, check your version numbers with the command
 `pip list | grep 'torch'` 
 
 *Torch, torchvision and torchaudio version numbers that come back should have ROCM tagged at the end.*
@@ -119,21 +124,21 @@ It's NOT enough VRAM to do latent upscale!
 
 Optimise Vram usage with:
 
---medvram and --lowvram launch arguments 
+`--medvram` and `--lowvram` launch arguments 
 
 But it gives reallybad quality oil painting style.(for me)
 
 **You need --always-batch-cond-uncond with lowvram and medvram options to prevent bad quality (for me at least)**
 
-**if your results get black image your card probably dont support float16, use: --precision full (at the cost of more VRAM)**
+**If your results get black image your card probably dont support float16, use: --precision full (at the cost of more VRAM)**
 
-I benchmarked so many options(list of options is on the top of the page).
+I benchmarked so many options (list of options is on the top of the page).
 
 I couldn't generate image bigger than 1000x1000 in img2img because of my VRAM (8GB) so I had to benchmark all launch options.
 
 You have to try all possible combinaison to find which allow you to generate the content you need.
 
-These options may be different for others graphics card model (mine is vega 56 8GB).
+These options may(not sure) be different for others graphics card model (mine is vega 56 8GB).
 
 --medvram is enough for a 8GB card. If you have less VRAM use --lowvram
 
@@ -157,12 +162,12 @@ if something doesnt work make sure:
 torch, torchvision and torchaudio version numbers that come back should have ROCM tagged at the end.
 
 
-Every time you want to lunch stable deffusion do:
+Every time you want to lunch stable diffusion go back to the venv where all dependencies are installed:
 ```
 cd stable-diffusion-webui
 python -m venv venv 
 source venv/bin/activate
-
+python launch.py --opt-sub-quad-attention --medvram --disable-nan-check --always-batch-cond-uncond --no-half
 ```
 
 
