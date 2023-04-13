@@ -118,9 +118,11 @@ After that’s installed, check your version numbers with the command
 
 
 
-I have a vaga 56 8GB so ...
+I have a vega 56 8GB so ...
 
-It's NOT enough VRAM to do latent upscale!
+It wasn't enough VRAM to do latent upscale!
+
+But I found a fix!
 
 Optimise Vram usage with:
 
