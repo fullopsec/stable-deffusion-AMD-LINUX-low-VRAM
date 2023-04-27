@@ -164,7 +164,7 @@ if something doesnt work make sure:
 torch, torchvision and torchaudio version numbers that come back should have ROCM tagged at the end.
 
 
-Every time you want to lunch stable diffusion go back to the venv where all dependencies are installed:
+Every time you want to launch stable diffusion go back to the venv where all dependencies are installed:
 ```
 cd stable-diffusion-webui
 python -m venv venv 
