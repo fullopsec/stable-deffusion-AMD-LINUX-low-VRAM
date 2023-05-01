@@ -121,7 +121,7 @@ python launch.py --opt-sub-quad-attention --medvram --disable-nan-check --always
 ```
 Note: These options may differ for other graphics card models.
 
-18. The time taken to generate 1024x1024 img2img was 1m 16.33s, and 1024x1024 hires fix was 1m 39s. Generating base images (512x512px) takes 10-20s.
+The time taken to generate 1024x1024 img2img was 1m 16.33s, and 1024x1024 hires fix was 1m 39s. Generating base images (512x512px) takes 10-20s.
 
 19. If something does not work, check the Torch, torchvision, and torchaudio version numbers with the command:
 ```
@@ -129,7 +129,9 @@ pip list | grep 'torch'
 ```
 The version numbers should have ROCM tagged at the end.
 
-20. Every time you want to launch stable diffusion, go back to the venv where all dependencies are installed with the following commands:
+## Usage after install
+
+Every time you want to launch stable diffusion, go back to the venv where all dependencies are installed with the following commands:
 ```
 cd stable-diffusion-webui
 python -m venv venv 
@@ -137,12 +139,12 @@ source venv/bin/activate
 python launch.py --opt-sub-quad-attention --medvram --disable-nan-check --always-batch-cond-uncond --no-half
 ```
 
-21. Watch out for VRAM usage and system temps with the following commands:
+ Watch out for VRAM usage and system temps with the following commands:
 ```
 sudo radeontop
 watch -n 1 sensors
 ```
 
-22. Adjust your fan curve if your temps are too high (70C).
+Adjust your fan curve if your temps are too high (70C).
 
-23. In the next video, the process of generating images with high details will be demonstrated using the same GPU (8GB). Multiple methods will be benchmarked.
+[In this youtube video](https://www.youtube.com/watch?v=lA8PMsu_2WY), I show the process of generating images with high details and a 4K end size using the same GPU (8GB). 
