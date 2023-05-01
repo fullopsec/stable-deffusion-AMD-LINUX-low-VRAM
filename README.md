@@ -1,170 +1,135 @@
-# stable-deffusion-AMD-LINUX-low-VRAM
+# Stable-Diffusion-AMD-Linux-Low-VRAM
 
-Youtube video: https://youtu.be/p2H_Zh4lJTI 
+This repository contains instructions on how to host your own AI for image generation using stable diffusion with an 8GB VRAM AMD GPU on Linux. This is an affordable and efficient alternative to using Google Colab, which can be quite expensive. 
 
-Start hosting your own AI for image generation with stable diffusion. Too much people use google collab and pay outrageous price, now you can do it for free with your GPU.
+Watch this [YouTube video](https://youtu.be/p2H_Zh4lJTI) to learn how to install stable diffusion and make it work on your AMD GPU using ROCm. Please note that each GPU is unique, and the launch parameters required may vary. However, the launch parameters used in the video are as follows:
 
-This video show how to install stable diffusion and make it work with only an 8GB VRAM AMD GPU on Linux. AMD GPU's are working thanks to ROCM. We can use an old 8GB VRAM GPU with the help of some launch options that prevent over-allocation of GPU memory.
-
-Lower VRAM GPU might work but you have to try  your own combination of launch parameters 
-
-Must have: 
-
-Linux OS (I use a debian based distro)
-
-AMD GPU (8GB works)
-
-Each GPU can be different. The parameters I needed might be different from yours, try them. It took me 3 hours to find which worked for my GPU.
-
-My launch parameters:
+```
 --no-half --always-batch-cond-uncond --opt-sub-quad-attention --medvram --disable-nan-check
-
-List of launch parameters:
-https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/Optimizations
-
-VAE I USED (vae-ft-mse-840000-ema-pruned.ckpt):
-https://huggingface.co/stabilityai/sd-vae-ft-mse-original/tree/main 
-
-______________
-
-Download the driver for your amd gpu
-
-https://www.amd.com/en/support
-
-
-
-Add yourself to the render and video groups using
-```
-sudo usermod -a -G render yourusername      
-sudo usermod -a -G video yourusername
 ```
 
-Confirm you have python 3 installed by typing into terminal:
+For a complete list of launch parameters, check out the [Optimizations wiki](https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/Optimizations).
 
-`python3 --version` 
+If you want to [download my VAE](https://huggingface.co/stabilityai/sd-vae-ft-mse-original/tree/main), you can.
 
-**Install rocm**
-```
-sudo amdgpu-install --usecase=rocm --no-dkms
-```  
+## Prerequisites
+To get started, you'll need the following:
 
-Reboot
+- Linux OS (a Debian-based distro is recommended)
+- AMD GPU (8GB or more) (You may try with less VRAM)
+- Python 3
 
-`sudo reboot`
+## Installation
+1. Download the driver for your AMD GPU from [AMD's website](https://www.amd.com/en/support).
+2. Add yourself to the render and video groups using the following commands:
 
-
-After rebooting, this command should show your gpu:
-
-`rocminfo`
-
-Clone the stable diffusion GUI repo:
-
-```
-sudo apt-get install git
-git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui
-cd stable-diffusion-webui
-```  
-
-
-If you have python 3.8 enter this to make sure you have VENV capabilities (replace with your python version):
-
-  `apt install python3.8-venv`    
-  
-  
-   Install pip3 and wheel and update them
+   ```
+   sudo usermod -a -G render yourusername      
+   sudo usermod -a -G video yourusername
+   ```
    
-```
-sudo apt install python3-pip           
-python -m pip install --upgrade pip wheel
-```      
+3. Confirm that you have Python 3 installed by typing the following command into the terminal:
 
-Download any stable diffusion model you like and put it in models/Stable-diffusion folder
+   ```
+   python3 --version
+   ```
+   
+4. Install ROCm by running the following command:
 
-You can go to https://civitai.com/ to find models (also a good source for prompts)
+   ```
+   sudo amdgpu-install --usecase=rocm --no-dkms
+   ```
+   
+5. Reboot your system using the following command:
 
-Upgrade to latest stable kernel(for better performances):
-```
-sudo apt-get update
-sudo apt-get dist-upgrade
-```
+   ```
+   sudo reboot
+   ```
+   
+6. After rebooting, confirm that your GPU is recognized by running the following command:
 
-reboot again
+   ```
+   rocminfo
+   ```
+   
+7. Clone the stable diffusion GUI repository:
 
-`sudo reboot`
+   ```
+   sudo apt-get install git
+   git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui
+   cd stable-diffusion-webui
+   ```
+   
+8. If you have Python 3.8 installed, make sure you have VENV capabilities by running the following command (replace with your Python version if necessary):
+
+   ```
+   apt install python3.8-venv
+   ```
+   
+9. Install pip3 and wheel, and update them using the following commands:
+
+   ```
+   sudo apt install python3-pip           
+   python -m pip install --upgrade pip wheel
+   ```
+   
+10. Download any stable diffusion model you like and put it in the `models/Stable-diffusion` folder. You can find models at [CIViTAI](https://civitai.com/), which is also a great source of prompts.
+
+11. For better performance, upgrade to the latest stable kernel by running the following commands:
+
+   ```
+   sudo apt-get update
+   sudo apt-get dist-upgrade
+   ```
+   
+12. Reboot your system again using the following command:
+
+   ```
+   sudo reboot
+   ```
 
 
-Go to the virtual env of SD:
+13. Go to the virtual env of SD:
 ```
 cd stable-diffusion-webui
 python -m venv venv 
 source venv/bin/activate
 ``` 
 
-Next is installing the PyTorch machine learning library for AMD:
+14. Install the PyTorch machine learning library for AMD:
+```
+pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/rocm5.4.2
+```
+Note: This is to be installed in the VENV, not on the OS!
 
-Lots of people were telling to install 5.2 but it didn't work for me. I used 5.4.2
-
-This is to be installed in the VENV, not on the OS!
-
-`pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/rocm5.4.2` 
-
-
-After that’s installed, check your version numbers with the command
-`pip list | grep 'torch'` 
-
-*Torch, torchvision and torchaudio version numbers that come back should have ROCM tagged at the end.*
-
+15. After installation, check your version numbers with the command:
+```
+pip list | grep 'torch'
+```
+The output should show Torch, torchvision, and torchaudio version numbers with ROCM tagged at the end.
 ![image](https://user-images.githubusercontent.com/114147068/231775700-e292b9a3-8969-4018-8a20-6a040e47ec5c.png)
 
+16. Optimize VRAM usage with `--medvram` and `--lowvram` launch arguments. Use `--always-batch-cond-uncond` with `--lowvram` and `--medvram` options to prevent bad quality. If your results turn out to be black images, your card probably does not support float16, so use `--precision full` (at the cost of more VRAM).
 
+17. Benchmark different options. The options that enabled generating nice images (1024x1024) upscaled to 4K were:
+```
+--no-half --always-batch-cond-uncond --opt-sub-quad-attention --medvram --disable-nan-check
+```
+Launch the command:
+```
+python launch.py --opt-sub-quad-attention --medvram --disable-nan-check --always-batch-cond-uncond --no-half
+```
+Note: These options may differ for other graphics card models.
 
-I have a vega 56 8GB so ...
+18. The time taken to generate 1024x1024 img2img was 1m 16.33s, and 1024x1024 hires fix was 1m 39s. Generating base images (512x512px) takes 10-20s.
 
-It wasn't enough VRAM to do latent upscale!
+19. If something does not work, check the Torch, torchvision, and torchaudio version numbers with the command:
+```
+pip list | grep 'torch'
+```
+The version numbers should have ROCM tagged at the end.
 
-But I found a fix!
-
-Optimise Vram usage with:
-
-`--medvram` and `--lowvram` launch arguments 
-
-But it gives reallybad quality oil painting style.(for me)
-
-**You need --always-batch-cond-uncond with lowvram and medvram options to prevent bad quality (for me at least)**
-
-**If your results get black image your card probably dont support float16, use: --precision full (at the cost of more VRAM)**
-
-I benchmarked so many options (list of options is on the top of the page).
-
-I couldn't generate image bigger than 1000x1000 in img2img because of my VRAM (8GB) so I had to benchmark all launch options.
-
-You have to try all possible combinaison to find which allow you to generate the content you need.
-
-These options may(not sure) be different for others graphics card model (mine is vega 56 8GB).
-
---medvram is enough for a 8GB card. If you have less VRAM use --lowvram
-
-  ## **The options that enabled me to generate nice images(1024x1024) upscaled to (2048x2048) was:**
-
-**--no-half --always-batch-cond-uncond --opt-sub-quad-attention --medvram --disable-nan-check**
-
-`python launch.py --opt-sub-quad-attention --medvram --disable-nan-check --always-batch-cond-uncond --no-half`
-
-Time taken: 1m 16.33s  (1024x1024) img2img
-
-Time taken: 1m 39  at (1024x1024) hires fix
-
-Your base images (512x512px) are quick to generate (10-20s)
-
-
-if something doesnt work make sure:
-
-`pip list | grep 'torch'`
-
-torch, torchvision and torchaudio version numbers that come back should have ROCM tagged at the end.
-
-
-Every time you want to launch stable diffusion go back to the venv where all dependencies are installed:
+20. Every time you want to launch stable diffusion, go back to the venv where all dependencies are installed with the following commands:
 ```
 cd stable-diffusion-webui
 python -m venv venv 
@@ -172,17 +137,12 @@ source venv/bin/activate
 python launch.py --opt-sub-quad-attention --medvram --disable-nan-check --always-batch-cond-uncond --no-half
 ```
 
-
-You might want to watch out for your VRAM usage and system temps. I use:
+21. Watch out for VRAM usage and system temps with the following commands:
 ```
 sudo radeontop
 watch -n 1 sensors
 ```
 
-Adjust your fan curve if your temps are too high!!!(70C)
+22. Adjust your fan curve if your temps are too high (70C).
 
-
-
-In the next video I will show you how to make them 2048x2048 with high details. (same GPU 8GB)
-
-I will benchmark multiple methods!
+23. In the next video, the process of generating images with high details will be demonstrated using the same GPU (8GB). Multiple methods will be benchmarked.
